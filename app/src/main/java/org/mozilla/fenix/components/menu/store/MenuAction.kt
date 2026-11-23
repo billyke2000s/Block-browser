@@ -59,6 +59,9 @@ sealed class MenuAction : MenuEvent {
     /** [MenuAction] dispatched to launch find in page feature for the current site. */
     data object FindInPage : MenuAction()
 
+    /** Block Browser: [MenuAction] dispatched to download a video the current page loaded. */
+    data object DownloadVideo : MenuAction()
+
     /** [MenuAction] dispatched to move the current private tab to a non-private tab. */
     data object MoveToNonPrivateTab : MenuAction()
 

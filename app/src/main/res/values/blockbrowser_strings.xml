@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<!-- Block Browser's own strings (English only for now). -->
+<resources>
+    <string name="bb_menu_download_video" translatable="false">Download video</string>
+    <string name="bb_video_none_title" translatable="false">No video found yet</string>
+    <string name="bb_video_none_message" translatable="false">Start playing the video on this page, then tap Download video again.\n\nCopy-protected (DRM) videos and live streams can\'t be downloaded.</string>
+    <string name="bb_video_checking" translatable="false">Checking the videos on this page…</string>
+    <string name="bb_video_choose" translatable="false">Choose a video</string>
+    <string name="bb_video_choose_quality" translatable="false">Choose a quality</string>
+    <string name="bb_video_cant_title" translatable="false">Can\'t download this video</string>
+    <string name="bb_video_stream" translatable="false">Video stream</string>
+    <string name="bb_video_file" translatable="false">Video file</string>
+    <string name="bb_video_started" translatable="false">Downloading in the background. Progress is in your notifications.</string>
+    <string name="bb_video_channel" translatable="false">Video downloads</string>
+    <string name="bb_video_preparing" translatable="false">Preparing download…</string>
+    <string name="bb_video_converting" translatable="false">Saving video…</string>
+    <string name="bb_video_progress" translatable="false">%1$d%% · %2$s</string>
+    <string name="bb_video_done" translatable="false">Saved to Downloads. Tap to open.</string>
+    <string name="bb_video_failed" translatable="false">Download failed</string>
+    <string name="bb_video_cancel" translatable="false">Cancel</string>
+    <string name="bb_video_storage_permission" translatable="false">Block Browser needs permission to save files. Download any file once and allow it, then try again.</string>
+</resources>

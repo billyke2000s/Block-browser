@@ -433,6 +433,9 @@ class Core(
                 // Install the "icons" WebExtension to automatically load icons for every visited website.
                 icons.install(engine, this)
 
+                // Block Browser: notes the videos pages load, for the "Download video" menu item.
+                io.github.billyke2000s.blockbrowser.media.MediaFinder.install(engine, this)
+
                 applicationScope.launch {
                     val providerList = serpTelemetryRepository.updateProviderList()
                     // Install the "ads" WebExtension to get the links in an partner page.

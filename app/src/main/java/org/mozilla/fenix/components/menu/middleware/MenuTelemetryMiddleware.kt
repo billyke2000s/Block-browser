@@ -219,6 +219,7 @@ class MenuTelemetryMiddleware<S : State, A : Action>(private val accessPoint: Me
             MenuAction.Navigate.Summarizer,
             MenuAction.InitAction,
             is MenuAction.CustomMenuItemAction,
+            is MenuAction.DownloadVideo,
             is MenuAction.UpdateBookmarkState,
             is MenuAction.UpdateExtensionState,
             is MenuAction.UpdatePinnedState,

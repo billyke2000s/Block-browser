@@ -13,9 +13,31 @@ Block Browser is not made, endorsed or supported by Mozilla or the Iceraven main
 | Name, icon, logo and package name (`io.github.billyke2000s.blockbrowser`), so it installs alongside Firefox and Iceraven | `app/build.gradle`, `app/src/forkRelease/res/`, CI string replacement |
 | Offers to install **uBlock Origin** on first start (Firefox's normal add-on prompt; it's from addons.mozilla.org and updates itself) | `app/src/main/java/io/github/billyke2000s/blockbrowser/UBlockOriginOffer.kt` |
 | Enhanced Tracking Protection is **Strict** by default (Iceraven/Firefox: Standard) | `Settings.kt`, `tracking_protection_preferences.xml` |
+| **Download video** in the menu (under Find in page): saves a video the page played. Plain files go to the normal download manager; HLS (`.m3u8`) and DASH (`.mpd`) streams are downloaded in the background with a progress notification and saved to Downloads as MP4 (or WebM for VP9 video), without re-encoding | `app/src/main/java/io/github/billyke2000s/blockbrowser/media/`, `app/src/main/assets/extensions/blockbrowser-media/` |
 | CI builds on every push, signs with the project key and publishes a release | `.github/workflows/build.yml`, `automation/blockbrowser/sign-apks.sh` |
 
-Planned: a built-in "Download video" menu item for plain video files and HLS/DASH streams. DRM-protected video is out of scope and won't be supported.
+### Video downloads
+
+A small built-in extension watches the responses each tab receives and notes video files, HLS playlists and DASH manifests (`assets/extensions/blockbrowser-media/`). **Download video** then checks each one, lets you pick a video and a quality, and downloads it through the browser's own network stack, so signed-in pages and private tabs keep working.
+
+What it won't do, on purpose or because it can't:
+
+- **Copy-protected (DRM) or encrypted video is refused.** That includes Netflix, Disney+, Prime Video and most paid streaming. Block Browser does not get around copy protection.
+- **Live streams** are refused; only finished videos can be saved.
+- **DASH manifests with several periods** (often adverts spliced in) aren't supported yet.
+- **YouTube** doesn't serve its web player as plain HLS/DASH, so it generally isn't detected.
+- If nothing is found, start playing the video first: players often only load the stream once playback starts.
+
+The playlist/manifest parsers and the downloader have JVM tests in `app/src/test/java/io/github/billyke2000s/blockbrowser/media/`. They need no Android SDK:
+
+```sh
+# from the repo root, with junit-4.13.2.jar and hamcrest-core-1.3.jar in ./lib
+M=app/src/main/java/io/github/billyke2000s/blockbrowser/media
+T=app/src/test/java/io/github/billyke2000s/blockbrowser/media
+javac -d out -cp lib/junit-4.13.2.jar $M/HlsPlaylist.java $M/DashManifest.java $M/StreamDownload.java $M/StreamTrack.java $M/StreamUrls.java $T/*.java
+java -cp out:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar org.junit.runner.JUnitCore \
+  io.github.billyke2000s.blockbrowser.media.HlsPlaylistTest io.github.billyke2000s.blockbrowser.media.DashManifestTest io.github.billyke2000s.blockbrowser.media.StreamDownloadTest
+```
 
 ## Install
 

@@ -177,6 +177,7 @@ fun MainMenu(
     extensionsMenuItemDescription: String?,
     moreSettingsSubmenu: @Composable () -> Unit,
     extensionSubmenu: @Composable () -> Unit,
+    onDownloadVideoMenuClick: () -> Unit = {},
 ) {
     MenuFrame(
         contentModifier =
@@ -300,6 +301,7 @@ fun MainMenu(
                 onEditBookmarkButtonClick = onEditBookmarkButtonClick,
                 onSwitchToDesktopSiteMenuClick = onSwitchToDesktopSiteMenuClick,
                 onFindInPageMenuClick = onFindInPageMenuClick,
+                onDownloadVideoMenuClick = onDownloadVideoMenuClick,
                 onMoreMenuClick = onMoreMenuClick,
                 extensionsMenuItemDescription = extensionsMenuItemDescription,
                 moreSettingsSubmenu = moreSettingsSubmenu,
@@ -381,6 +383,7 @@ private fun ToolsAndActionsMenuGroup(
     extensionsMenuItemDescription: String?,
     moreSettingsSubmenu: @Composable () -> Unit,
     extensionSubmenu: @Composable () -> Unit,
+    onDownloadVideoMenuClick: () -> Unit = {},
 ) {
     MenuGroup {
         val labelId = R.string.browser_menu_desktop_site
@@ -414,6 +417,13 @@ private fun ToolsAndActionsMenuGroup(
             label = stringResource(id = R.string.browser_menu_find_in_page),
             beforeIconPainter = painterResource(id = iconsR.drawable.mozac_ic_search_24),
             onClick = onFindInPageMenuClick,
+        )
+
+        // Block Browser: save a video the page is playing.
+        MenuItem(
+            label = stringResource(id = R.string.bb_menu_download_video),
+            beforeIconPainter = painterResource(id = iconsR.drawable.mozac_ic_download_24),
+            onClick = onDownloadVideoMenuClick,
         )
 
         MenuItem(

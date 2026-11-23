@@ -134,6 +134,12 @@ class MenuItemProvidersFactory(
 
             FenixMenuItem.FindInPage -> FindInPageMenuItemProvider(appStore = appStore)
 
+            FenixMenuItem.DownloadVideo ->
+                io.github.billyke2000s.blockbrowser.media.DownloadVideoMenuItemProvider(
+                    context = context,
+                    target = target,
+                )
+
             FenixMenuItem.DesktopSite ->
                 DesktopSiteMenuItemProvider(
                     browserStore = browserStore,

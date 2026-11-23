@@ -15,6 +15,7 @@ import org.mozilla.fenix.components.menu.FenixMenuItem.DefaultBrowserBanner
 import org.mozilla.fenix.components.menu.FenixMenuItem.DesktopSite
 import org.mozilla.fenix.components.menu.FenixMenuItem.Downloads
 import org.mozilla.fenix.components.menu.FenixMenuItem.Extensions
+import org.mozilla.fenix.components.menu.FenixMenuItem.DownloadVideo
 import org.mozilla.fenix.components.menu.FenixMenuItem.FindInPage
 import org.mozilla.fenix.components.menu.FenixMenuItem.Forward
 import org.mozilla.fenix.components.menu.FenixMenuItem.History
@@ -88,6 +89,7 @@ object MenuConfigurations {
                         listOf(
                             Bookmark,
                             FindInPage,
+                            DownloadVideo,
                             DesktopSite,
                             Extensions,
                             More(
@@ -182,6 +184,7 @@ object MenuConfigurations {
                             OpenInFirefox,
                             Bookmark,
                             FindInPage,
+                            DownloadVideo,
                             DesktopSite,
                             if (shouldShowExtensions) Extensions else null,
                             Translate,
