@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter
 import org.mozilla.conventions.WriteRuntimeDependencies
 
 import static org.mozilla.conventions.BuildConfigKt.getBuildId
+import static org.mozilla.conventions.BuildConfigKt.updateExtensionVersion
 
 plugins {
     id 'com.android.application'
@@ -883,4 +884,14 @@ mozilla {
 dependencies {
     detektPlugins project(":components:tooling-detekt")
     detektPlugins project(":mozilla-detekt-rules")
+}
+
+// Block Browser: the video finder extension's manifest.json is generated from manifest.template.json with a
+// version that changes every build, so GeckoView always installs the latest copy (same as Android Components).
+tasks.register("updateBlockBrowserExtensionVersion", Copy) { task ->
+    updateExtensionVersion(task, 'src/main/assets/extensions/blockbrowser-media', rootProject.ext.config.componentsVersion)
+}
+preBuild.dependsOn updateBlockBrowserExtensionVersion
+tasks.matching { it.name.startsWith("explodeAssetSource") }.configureEach { t ->
+    t.dependsOn(tasks.named("updateBlockBrowserExtensionVersion"))
 }

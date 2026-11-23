@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "media@blockbrowser.billyke2000s.github.io"
+    }
+  },
+  "name": "Block Browser video finder",
+  "version": "${version}",
+  "description": "Notes the video files and streams (HLS, DASH) a page loads, so Block Browser's Download video menu item can offer them.",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "permissions": [
+    "<all_urls>",
+    "webRequest",
+    "tabs",
+    "geckoViewAddons",
+    "nativeMessaging",
+    "nativeMessagingFromContent"
+  ]
+}
