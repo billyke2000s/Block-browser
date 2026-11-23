@@ -1370,13 +1370,14 @@ class Settings(
     val useStandardTrackingProtection by
         booleanPreference(
             appContext.getPreferenceKey(R.string.pref_key_tracking_protection_standard_option),
-            true,
+            // Block Browser: Strict is the default.
+            false,
         )
 
     val useStrictTrackingProtection by
         booleanPreference(
             appContext.getPreferenceKey(R.string.pref_key_tracking_protection_strict_default),
-            false,
+            true,
         )
 
     val useCustomTrackingProtection by

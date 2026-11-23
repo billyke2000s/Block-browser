@@ -47,7 +47,7 @@ android {
             arg("room.schemaLocation", "$projectDir/schemas".toString())
         }
 
-        applicationId "io.github.forkmaintainers"
+        applicationId "io.github.billyke2000s"
         minSdk config.minSdkVersion
         targetSdk config.targetSdkVersion
         versionCode 1
@@ -161,15 +161,15 @@ android {
             isDefault true
             shrinkResources false
             minifyEnabled false
-            applicationIdSuffix ".iceraven.debug"
+            applicationIdSuffix ".blockbrowser.debug"
             pseudoLocalesEnabled true
             // Need to replicate default debug config features
             signingConfig signingConfigs.debug
             debuggable true
-            def deepLinkSchemeValue = "iceraven-debug"
+            def deepLinkSchemeValue = "blockbrowser-debug"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
             manifestPlaceholders.putAll([
-                    "sharedUserId": "io.github.forkmaintainers.iceraven.sharedID",
+                    "sharedUserId": "io.github.billyke2000s.blockbrowser.sharedID",
                     "deepLinkScheme": deepLinkSchemeValue,
             ])
             // Use custom default allowed addon list
@@ -180,11 +180,11 @@ android {
         }
         forkRelease releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
-            applicationIdSuffix ".iceraven"
-            def deepLinkSchemeValue = "iceraven"
+            applicationIdSuffix ".blockbrowser"
+            def deepLinkSchemeValue = "blockbrowser"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
             manifestPlaceholders.putAll([
-                    "sharedUserId": "io.github.forkmaintainers.iceraven.sharedID",
+                    "sharedUserId": "io.github.billyke2000s.blockbrowser.sharedID",
                     "deepLinkScheme": deepLinkSchemeValue,
             ])
             // Use custom default allowed addon list

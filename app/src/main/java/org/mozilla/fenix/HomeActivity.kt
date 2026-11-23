@@ -884,6 +884,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity, Crash
         components.core.store.dispatch(SearchAction.RefreshSearchEnginesAction)
 
         showPendingSendToDevicesIfPossible()
+
+        // Block Browser: offer uBlock Origin on the first start.
+        io.github.billyke2000s.blockbrowser.UBlockOriginOffer.maybeOffer(this)
     }
 
     override fun onRestart() {

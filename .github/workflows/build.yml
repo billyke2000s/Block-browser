@@ -1,0 +1,108 @@
+name: Build Block Browser
+
+# Every push to the iceraven branch builds the app and publishes the APKs as a GitHub release named build-<number>.
+# Pushing a tag such as v1.0.0 publishes a release with that name instead.
+on:
+  push:
+    branches:
+      - iceraven
+    tags:
+      - 'v*'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build APKs
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android/sdk/ndk /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          submodules: 'true'
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Install Android SDK with pieces Gradle skips
+        run: ./automation/iceraven/install-sdk.sh
+
+      - name: Version name
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "VERSION_NAME=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          else
+            echo "VERSION_NAME=$(cat version.txt | tr -d '\n')-build${{ github.run_number }}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Patch on the fly
+        run: |
+          ./automation/iceraven/patch_android_components.sh
+          ./automation/iceraven/setup_venv.sh
+
+      - name: Replace strings
+        run: |
+          sed -i 's/Firefox/Block Browser/g' app/src/*/res/values*/*strings.xml
+          sed -i '/about_content/s/Mozilla/billyke2000s/' app/src/*/res/values*/*strings.xml
+          sed -i '/<string name="trackers_blocked_panel_categorical_num_trackers_blocked">/s/%s/%1$s/g; /<string name="trackers_blocked_panel_categorical_num_trackers_blocked">/s/%d/%2$d/g' app/src/*/res/values*/*strings.xml
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build forkRelease variant of app
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=4g -Xms1g -Xmx7g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dev/stderr"
+        run: |
+          ./gradlew app:assembleForkRelease -PversionName="$VERSION_NAME" --stacktrace --no-daemon
+
+      - name: Sign APKs
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./automation/blockbrowser/sign-apks.sh gradle/build/app/outputs/apk/forkRelease dist
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v7
+        with:
+          name: block-browser-${{ env.VERSION_NAME }}
+          path: dist/*.apk
+          if-no-files-found: error
+
+      - name: Publish release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            TAG="$GITHUB_REF_NAME"; TITLE="Block Browser $VERSION_NAME"; LATEST=true
+          else
+            TAG="build-${{ github.run_number }}"; TITLE="Block Browser build ${{ github.run_number }}"; LATEST=true
+          fi
+          {
+            echo "Built from commit ${{ github.sha }} (Firefox engine $(cat version.txt | tr -d '\n'))."
+            echo
+            echo "Most phones need **block-browser-arm64-v8a.apk**. Older 32-bit phones need armeabi-v7a."
+            echo
+            cat dist/SIGNING.txt
+          } > notes.md
+          gh release create "$TAG" dist/*.apk --title "$TITLE" --notes-file notes.md \
+            --target "${{ github.sha }}" --latest="$LATEST"
