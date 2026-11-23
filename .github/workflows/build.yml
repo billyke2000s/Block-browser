@@ -117,3 +117,52 @@ jobs:
           } > notes.md
           gh release create "$TAG" dist/*.apk --title "$TITLE" --notes-file notes.md \
             --target "${{ github.sha }}" --latest="$LATEST"
+
+  # Uses the x86_64 APK from the build job on an Android emulator: opens test pages with HLS, DASH and plain video,
+  # downloads each through ⋮ → Download video and checks the saved files. See automation/blockbrowser/video-test/.
+  video-check:
+    name: Download video on an emulator
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Get the APKs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: block-browser-*
+          merge-multiple: true
+          path: apks
+
+      - name: Install ffmpeg and make test streams
+        run: |
+          command -v ffmpeg >/dev/null || { sudo apt-get update -q && sudo apt-get install -y -q ffmpeg; }
+          ./automation/blockbrowser/video-test/make-test-streams.sh "$PWD/video-test-streams"
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run the check on Android 14
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          ram-size: 4096M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: ./automation/blockbrowser/video-test/video-check.sh apks/block-browser-x86_64.apk
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: video-check-results
+          path: video-check-output/
+          if-no-files-found: warn
