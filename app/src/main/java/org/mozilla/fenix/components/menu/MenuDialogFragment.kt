@@ -588,9 +588,9 @@ class MenuDialogFragment : BottomSheetDialogFragment() {
                                 },
                                 onDownloadVideoMenuClick = {
                                     // Block Browser: the flow shows its own dialogs over the activity.
-                                    val activity = requireActivity()
+                                    val hostActivity = requireActivity()
                                     dismissAllowingStateLoss()
-                                    io.github.billyke2000s.blockbrowser.media.VideoDownloadFlow.start(activity)
+                                    io.github.billyke2000s.blockbrowser.media.VideoDownloadFlow.start(hostActivity)
                                 },
                                 onBannerClick = {
                                     menuStore.dispatch(MenuAction.DefaultBrowserMenuBannerClicked)
