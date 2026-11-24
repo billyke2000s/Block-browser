@@ -22,6 +22,10 @@ FAILED=0
 fail(){ echo "::error::$*"; echo "- ❌ $*" >> "$SUMMARY"; FAILED=1; }
 pass(){ echo "PASS: $*"; echo "- ✅ $*" >> "$SUMMARY"; }
 
+# Every adb call gets a time limit, so a stuck emulator fails the check with diagnostics instead of hanging the job.
+adb(){ timeout "${ADB_TIMEOUT:-60}" command adb "$@"; }
+device_state(){ echo "  - device: $(command adb get-state 2>&1 | head -1); focus: $(adb shell dumpsys window 2>/dev/null | grep -m1 mCurrentFocus | tr -s ' ')" >> "$SUMMARY"; }
+
 API=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
 echo "### Download video — Android API $API" >> "$SUMMARY"
 
@@ -29,7 +33,7 @@ echo "### Download video — Android API $API" >> "$SUMMARY"
 python3 "$HERE/stream-server.py" "$PORT" "$OUT/requests.json" "$STREAMS" 2> "$OUT/server.log" &
 SERVER=$!
 adb logcat -c
-adb logcat -v time > "$OUT/logcat.txt" 2>&1 &
+command adb logcat -v time > "$OUT/logcat.txt" 2>&1 &
 LOGCAT=$!
 trap 'kill $SERVER $LOGCAT 2>/dev/null' EXIT
 sleep 1
@@ -74,6 +78,7 @@ print(" · ".join(items[:50]))
 PY
 }
 diag(){
+  device_state
   dump "diag-$1" >/dev/null 2>&1; shot "diag-$1"
   echo "  - on screen [$1]: $(screen_text "diag-$1")" >> "$SUMMARY"
   local log; log=$(adb logcat -d 2>/dev/null | grep -E "VideoDownloadFlow|StreamDownloadService|MediaFinder|UBlockOriginOffer|FATAL|AndroidRuntime" | tail -8 | tr '\n' '|' | head -c 1500)
@@ -155,6 +160,7 @@ adb shell am start -n "$PKG/org.mozilla.fenix.HomeActivity" --ez performancetest
 sleep 20
 shot first-start
 dump first-start
+echo "- first start:" >> "$SUMMARY"; device_state
 if has first-start text "uBlock Origin" contains; then pass "Offers uBlock Origin on first start"; else echo "- ⚠️ No uBlock Origin prompt seen on first start (needs internet access to addons.mozilla.org): $(screen_text first-start)" >> "$SUMMARY"; fi
 dismiss_prompts
 
