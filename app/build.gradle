@@ -891,7 +891,10 @@ dependencies {
 tasks.register("updateBlockBrowserExtensionVersion", Copy) { task ->
     updateExtensionVersion(task, 'src/main/assets/extensions/blockbrowser-media', rootProject.ext.config.componentsVersion)
 }
-preBuild.dependsOn updateBlockBrowserExtensionVersion
+tasks.register("updateBlockBrowserBlockerVersion", Copy) { task ->
+    updateExtensionVersion(task, 'src/main/assets/extensions/blockbrowser-blocker', rootProject.ext.config.componentsVersion)
+}
+preBuild.dependsOn updateBlockBrowserExtensionVersion, updateBlockBrowserBlockerVersion
 tasks.matching { it.name.startsWith("explodeAssetSource") }.configureEach { t ->
-    t.dependsOn(tasks.named("updateBlockBrowserExtensionVersion"))
+    t.dependsOn(tasks.named("updateBlockBrowserExtensionVersion"), tasks.named("updateBlockBrowserBlockerVersion"))
 }

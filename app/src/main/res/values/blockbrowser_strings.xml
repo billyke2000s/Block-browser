@@ -22,4 +22,14 @@
     <string name="bb_video_failed" translatable="false">Download failed</string>
     <string name="bb_video_cancel" translatable="false">Cancel</string>
     <string name="bb_video_storage_permission" translatable="false">Block Browser needs permission to save files. Download any file once and allow it, then try again.</string>
+    <string name="bb_home_blocked_title" translatable="false">Ads and trackers blocked</string>
+    <string name="bb_home_today" translatable="false">Today</string>
+    <string name="bb_home_session" translatable="false">This session</string>
+    <string name="bb_home_all_time" translatable="false">All time</string>
+    <string name="bb_home_last_7_days" translatable="false">Last 7 days</string>
+    <string name="bb_home_most_blocked" translatable="false">Most blocked</string>
+    <string name="bb_home_protecting" translatable="false">Protecting against %1$s known ad, tracker and malware domains</string>
+    <string name="bb_menu_ad_blocking" translatable="false">Ad blocking</string>
+    <string name="bb_menu_ad_blocking_on" translatable="false">On</string>
+    <string name="bb_menu_ad_blocking_off" translatable="false">Off</string>
 </resources>

@@ -63,6 +63,10 @@ jobs:
             echo "VERSION_NAME=$(cat version.txt | tr -d '\n')-build${{ github.run_number }}" >> "$GITHUB_ENV"
           fi
 
+      - name: Refresh the blocklist
+        # Keeps the bundled list if a download fails; the script refuses to write a truncated list.
+        run: ./automation/blockbrowser/update-blocklist.sh || echo "::warning::Blocklist refresh failed; using the bundled list"
+
       - name: Patch on the fly
         run: |
           ./automation/iceraven/patch_android_components.sh

@@ -11,7 +11,8 @@ Block Browser is not made, endorsed or supported by Mozilla or the Iceraven main
 | Change | Where |
 |---|---|
 | Name, icon, logo and package name (`io.github.billyke2000s.blockbrowser`), so it installs alongside Firefox and Iceraven | `app/build.gradle`, `app/src/forkRelease/res/`, CI string replacement |
-| Installs **uBlock Origin** silently on first start, with no prompt, private tabs included. It comes from addons.mozilla.org and updates itself; if there's no internet on first start it's tried again next start, and once removed in Settings → Add-ons it stays removed | `app/src/main/java/io/github/billyke2000s/blockbrowser/UBlockOriginOffer.kt`, `WebExtensionPromptFeature.kt` |
+| **Its own ad blocker**: a built-in extension blocks requests to about 215,000 advertising, tracking and malware domains (StevenBlack hosts + HaGeZi Multi PRO, refreshed on every CI build). A page on a blocked domain shows an explanation with "Allow this site". **⋮ → Ad blocking** turns it off or on for the current site. No uBlock Origin or other add-on is installed | `app/src/main/assets/extensions/blockbrowser-blocker/`, `app/src/main/java/io/github/billyke2000s/blockbrowser/blocking/`, `automation/blockbrowser/update-blocklist.sh` |
+| **Home page like the old Block Browser**: logo, search box in the middle, shortcuts, ads and trackers blocked today / this session / all time, a 7-day chart and the most blocked domains (private tabs are counted but their domains aren't recorded). Address bar at the top, no Firefox stories | `blocking/BlockStatsSection.kt`, `home/ui/Homepage.kt`, `Settings.kt` |
 | Enhanced Tracking Protection is **Strict** by default (Iceraven/Firefox: Standard) | `Settings.kt`, `tracking_protection_preferences.xml` |
 | **Download video** in the menu (under Find in page): saves a video the page played. Plain files go to the normal download manager; HLS (`.m3u8`) and DASH (`.mpd`) streams are downloaded in the background with a progress notification and saved to Downloads as MP4 (or WebM for VP9 video), without re-encoding | `app/src/main/java/io/github/billyke2000s/blockbrowser/media/`, `app/src/main/assets/extensions/blockbrowser-media/` |
 | CI builds on every push, signs with the project key and publishes a release | `.github/workflows/build.yml`, `automation/blockbrowser/sign-apks.sh` |
@@ -77,6 +78,10 @@ The unsigned APKs appear in `gradle/build/app/outputs/apk/forkRelease/`; sign th
 ## Updating from upstream
 
 The `iceraven` branch tracks Iceraven. To pull in a new Iceraven/Firefox release, merge `fork-maintainers/iceraven-browser`'s `iceraven` branch. Block Browser's changes are deliberately small and listed in the table above, so conflicts should stay limited to those files. Iceraven's own `ci.yml` and `release.yml` workflows were removed here; keep them removed when merging.
+
+## Blocklist licences
+
+The bundled blocklist combines [StevenBlack's hosts](https://github.com/StevenBlack/hosts) (MIT) and [HaGeZi Multi PRO](https://github.com/hagezi/dns-blocklists) (GPL-3.0); its header records the versions used.
 
 ## License
 

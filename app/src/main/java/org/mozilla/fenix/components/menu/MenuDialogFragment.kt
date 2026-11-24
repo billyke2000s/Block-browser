@@ -592,6 +592,21 @@ class MenuDialogFragment : BottomSheetDialogFragment() {
                                     dismissAllowingStateLoss()
                                     io.github.billyke2000s.blockbrowser.media.VideoDownloadFlow.start(hostActivity)
                                 },
+                                isAdBlockingOn =
+                                    io.github.billyke2000s.blockbrowser.blocking.AdBlocker.isBlockingOn(
+                                        selectedTab?.content?.url?.toUri()?.host,
+                                    ),
+                                onAdBlockingMenuClick = {
+                                    // Block Browser: toggle the ad blocker for this site, then reload it.
+                                    val bbTab = selectedTab
+                                    val bbHost = bbTab?.content?.url?.toUri()?.host
+                                    if (bbTab != null && !bbHost.isNullOrEmpty()) {
+                                        val bbBlocker = io.github.billyke2000s.blockbrowser.blocking.AdBlocker
+                                        bbBlocker.setBlockingOn(bbHost, !bbBlocker.isBlockingOn(bbHost))
+                                        requireComponents.useCases.sessionUseCases.reload(bbTab.id)
+                                    }
+                                    dismissAllowingStateLoss()
+                                },
                                 onBannerClick = {
                                     menuStore.dispatch(MenuAction.DefaultBrowserMenuBannerClicked)
                                     (context as? Activity)?.openSetDefaultBrowserOption()

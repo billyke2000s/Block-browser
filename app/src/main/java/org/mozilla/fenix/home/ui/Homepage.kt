@@ -231,16 +231,11 @@ internal fun Homepage(
                                 )
                             }
 
-                            if (showPrivacyReport) {
-                                TrackersBlockedCard(
-                                    trackersBlockedCount = trackersBlockedCount,
-                                    onPrivacyReportTapped = interactor::onPrivacyReportTapped,
-                                    onLongfoxEntryPointClicked = interactor::onLongfoxEntryPointClicked,
-                                    modifier = Modifier.padding(top = 16.dp),
-                                    longfoxEnabled = longfoxEnabled,
-                                    showLongfoxAnimation = showLongfoxAnimation,
-                                )
-                            }
+                            // Block Browser: its own blocking statistics instead of Firefox's "You're protected" card.
+                            io.github.billyke2000s.blockbrowser.blocking.BlockStatsSection(
+                                horizontalMargin = horizontalMargin,
+                                modifier = Modifier.padding(top = 16.dp),
+                            )
 
                             MaybeAddSetupChecklist(setupChecklistState, interactor)
 

@@ -436,6 +436,9 @@ class Core(
                 // Block Browser: notes the videos pages load, for the "Download video" menu item.
                 io.github.billyke2000s.blockbrowser.media.MediaFinder.install(engine, this)
 
+                // Block Browser: its own ad blocker.
+                io.github.billyke2000s.blockbrowser.blocking.AdBlocker.install(context, engine)
+
                 applicationScope.launch {
                     val providerList = serpTelemetryRepository.updateProviderList()
                     // Install the "ads" WebExtension to get the links in an partner page.

@@ -201,7 +201,8 @@ class Settings(
         lazyFeatureFlagBooleanPreference(
             appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
             featureFlag = ContentRecommendationsFeatureHelper.isContentRecommendationsFeatureEnabled(appContext),
-            defaultValue = { homescreenSections[HomeScreenSection.POCKET] == true },
+            // Block Browser: no Firefox stories on the home page.
+            defaultValue = { false },
         )
 
     /** Indicates what simple toolbar shortcut key is currently selected. */
@@ -1666,7 +1667,8 @@ class Settings(
     var shouldUseBottomToolbar by
         booleanPreference(
             key = appContext.getPreferenceKey(R.string.pref_key_toolbar_bottom),
-            default = true,
+            // Block Browser: address bar at the top by default, as on the old Block Browser.
+            default = false,
             persistDefaultIfNotExists = true,
         )
 
@@ -2733,7 +2735,8 @@ class Settings(
     var enableHomepageSearchBar by
         booleanPreference(
             key = appContext.getPreferenceKey(R.string.pref_key_enable_homepage_searchbar2),
-            default = false,
+            // Block Browser: search box in the middle of the home page, as on the old Block Browser.
+            default = true,
         )
 
     /** Indicates if the Mozilla Ads Client for Sponsored Stories is enabled. */

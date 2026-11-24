@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "blocker@blockbrowser.billyke2000s.github.io"
+    }
+  },
+  "name": "Block Browser ad blocker",
+  "version": "${version}",
+  "description": "Blocks requests to about 215,000 known advertising, tracking and malware domains (StevenBlack hosts and HaGeZi Multi PRO).",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "web_accessible_resources": ["blocked.html", "blocked.js", "blocked.css"],
+  "permissions": [
+    "<all_urls>",
+    "webRequest",
+    "webRequestBlocking",
+    "tabs",
+    "geckoViewAddons",
+    "nativeMessaging"
+  ]
+}

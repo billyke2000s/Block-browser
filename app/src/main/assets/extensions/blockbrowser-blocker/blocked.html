@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blocked by Block Browser</title>
+  <link rel="stylesheet" href="blocked.css">
+</head>
+<body>
+  <main>
+    <div class="shield" aria-hidden="true">🛡️</div>
+    <h1>Page blocked</h1>
+    <p><strong id="host"></strong> is on Block Browser's list of advertising, tracking and malware domains, so it wasn't opened.</p>
+    <p class="small">If you trust this site, you can turn ad blocking off for it. You can turn it back on from the menu (⋮ → Ad blocking).</p>
+    <div class="buttons">
+      <button id="back">Go back</button>
+      <button id="allow" class="secondary">Allow this site</button>
+    </div>
+  </main>
+  <script src="blocked.js"></script>
+</body>
+</html>

@@ -178,6 +178,8 @@ fun MainMenu(
     moreSettingsSubmenu: @Composable () -> Unit,
     extensionSubmenu: @Composable () -> Unit,
     onDownloadVideoMenuClick: () -> Unit = {},
+    isAdBlockingOn: Boolean = true,
+    onAdBlockingMenuClick: () -> Unit = {},
 ) {
     MenuFrame(
         contentModifier =
@@ -302,6 +304,8 @@ fun MainMenu(
                 onSwitchToDesktopSiteMenuClick = onSwitchToDesktopSiteMenuClick,
                 onFindInPageMenuClick = onFindInPageMenuClick,
                 onDownloadVideoMenuClick = onDownloadVideoMenuClick,
+                isAdBlockingOn = isAdBlockingOn,
+                onAdBlockingMenuClick = onAdBlockingMenuClick,
                 onMoreMenuClick = onMoreMenuClick,
                 extensionsMenuItemDescription = extensionsMenuItemDescription,
                 moreSettingsSubmenu = moreSettingsSubmenu,
@@ -384,6 +388,8 @@ private fun ToolsAndActionsMenuGroup(
     moreSettingsSubmenu: @Composable () -> Unit,
     extensionSubmenu: @Composable () -> Unit,
     onDownloadVideoMenuClick: () -> Unit = {},
+    isAdBlockingOn: Boolean = true,
+    onAdBlockingMenuClick: () -> Unit = {},
 ) {
     MenuGroup {
         val labelId = R.string.browser_menu_desktop_site
@@ -425,6 +431,23 @@ private fun ToolsAndActionsMenuGroup(
             beforeIconPainter = painterResource(id = iconsR.drawable.mozac_ic_download_24),
             onClick = onDownloadVideoMenuClick,
         )
+
+        // Block Browser: turn its ad blocker off or on for the current site.
+        val adBlockingState = if (isAdBlockingOn) MenuItemState.ACTIVE else MenuItemState.ENABLED
+        val adBlockingBadge =
+            stringResource(id = if (isAdBlockingOn) R.string.bb_menu_ad_blocking_on else R.string.bb_menu_ad_blocking_off)
+        MenuItem(
+            label = stringResource(id = R.string.bb_menu_ad_blocking),
+            stateDescription = adBlockingBadge,
+            beforeIconPainter = painterResource(id = iconsR.drawable.mozac_ic_shield_24),
+            state = adBlockingState,
+            onClick = onAdBlockingMenuClick,
+        ) {
+            Badge(
+                badgeText = adBlockingBadge,
+                state = adBlockingState,
+            )
+        }
 
         MenuItem(
             modifier =
