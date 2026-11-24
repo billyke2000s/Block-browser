@@ -128,6 +128,29 @@ class WebExtensionPromptFeature(
 
     @VisibleForTesting
     internal fun handleAfterInstallationRequest(promptRequest: WebExtensionPromptRequest.AfterInstallation) {
+        // Block Browser: uBlock Origin is installed silently on first start; accept its prompts without showing them.
+        if (io.github.billyke2000s.blockbrowser.UBlockOriginOffer.isSilentInstall(promptRequest.extension.id)) {
+            when (promptRequest) {
+                is WebExtensionPromptRequest.AfterInstallation.Permissions.Required ->
+                    handlePermissions(
+                        promptRequest,
+                        granted = true,
+                        privateBrowsingAllowed = true,
+                        technicalAndInteractionDataGranted = false,
+                    )
+
+                is WebExtensionPromptRequest.AfterInstallation.Permissions.Optional ->
+                    handlePermissions(
+                        promptRequest,
+                        granted = true,
+                        privateBrowsingAllowed = true,
+                        technicalAndInteractionDataGranted = false,
+                    )
+
+                is WebExtensionPromptRequest.AfterInstallation.PostInstallation -> consumePromptRequest()
+            }
+            return
+        }
         val installedState = addonManager.toInstalledState(promptRequest.extension)
         val addon = Addon.newFromWebExtension(promptRequest.extension, installedState)
         when (promptRequest) {

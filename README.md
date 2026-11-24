@@ -11,7 +11,7 @@ Block Browser is not made, endorsed or supported by Mozilla or the Iceraven main
 | Change | Where |
 |---|---|
 | Name, icon, logo and package name (`io.github.billyke2000s.blockbrowser`), so it installs alongside Firefox and Iceraven | `app/build.gradle`, `app/src/forkRelease/res/`, CI string replacement |
-| Offers to install **uBlock Origin** on first start (Firefox's normal add-on prompt; it's from addons.mozilla.org and updates itself) | `app/src/main/java/io/github/billyke2000s/blockbrowser/UBlockOriginOffer.kt` |
+| Installs **uBlock Origin** silently on first start, with no prompt, private tabs included. It comes from addons.mozilla.org and updates itself; if there's no internet on first start it's tried again next start, and once removed in Settings → Add-ons it stays removed | `app/src/main/java/io/github/billyke2000s/blockbrowser/UBlockOriginOffer.kt`, `WebExtensionPromptFeature.kt` |
 | Enhanced Tracking Protection is **Strict** by default (Iceraven/Firefox: Standard) | `Settings.kt`, `tracking_protection_preferences.xml` |
 | **Download video** in the menu (under Find in page): saves a video the page played. Plain files go to the normal download manager; HLS (`.m3u8`) and DASH (`.mpd`) streams are downloaded in the background with a progress notification and saved to Downloads as MP4 (or WebM for VP9 video), without re-encoding | `app/src/main/java/io/github/billyke2000s/blockbrowser/media/`, `app/src/main/assets/extensions/blockbrowser-media/` |
 | CI builds on every push, signs with the project key and publishes a release | `.github/workflows/build.yml`, `automation/blockbrowser/sign-apks.sh` |
