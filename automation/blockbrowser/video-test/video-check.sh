@@ -23,8 +23,9 @@ fail(){ echo "::error::$*"; echo "- ❌ $*" >> "$SUMMARY"; FAILED=1; }
 pass(){ echo "PASS: $*"; echo "- ✅ $*" >> "$SUMMARY"; }
 
 # Every adb call gets a time limit, so a stuck emulator fails the check with diagnostics instead of hanging the job.
-adb(){ timeout "${ADB_TIMEOUT:-60}" command adb "$@"; }
-device_state(){ echo "  - device: $(command adb get-state 2>&1 | head -1); focus: $(adb shell dumpsys window 2>/dev/null | grep -m1 mCurrentFocus | tr -s ' ')" >> "$SUMMARY"; }
+ADB_BIN="$(command -v adb)"
+adb(){ timeout "${ADB_TIMEOUT:-60}" "$ADB_BIN" "$@"; }
+device_state(){ echo "  - device: $("$ADB_BIN" get-state 2>&1 | head -1); focus: $(adb shell dumpsys window 2>/dev/null | grep -m1 mCurrentFocus | tr -s ' ')" >> "$SUMMARY"; }
 
 API=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
 echo "### Download video — Android API $API" >> "$SUMMARY"
@@ -33,7 +34,7 @@ echo "### Download video — Android API $API" >> "$SUMMARY"
 python3 "$HERE/stream-server.py" "$PORT" "$OUT/requests.json" "$STREAMS" 2> "$OUT/server.log" &
 SERVER=$!
 adb logcat -c
-command adb logcat -v time > "$OUT/logcat.txt" 2>&1 &
+"$ADB_BIN" logcat -v time > "$OUT/logcat.txt" 2>&1 &
 LOGCAT=$!
 trap 'kill $SERVER $LOGCAT 2>/dev/null' EXIT
 sleep 1
