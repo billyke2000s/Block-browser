@@ -56,8 +56,10 @@ try:
 except Exception:
     sys.exit(0)
 for n in nodes:
-    v = n.get(attr) or ""
-    ok = v == value if mode == "exact" else (value in v if mode == "contains" else value.lower() in v.lower())
+    vals = [n.get(attr) or ""]
+    if attr == "text":
+        vals.append(n.get("content-desc") or "")  # Compose often exposes labels as content-desc
+    ok = any((v == value) if mode == "exact" else ((value in v) if mode == "contains" else (value.lower() in v.lower())) for v in vals)
     if ok:
         l, t, r, b = map(int, re.findall(r"-?\d+", n.get("bounds")))
         if r > l and b > t:
@@ -162,7 +164,10 @@ sleep 20
 shot first-start
 dump first-start
 echo "- first start:" >> "$SUMMARY"; device_state
-if has first-start text "uBlock Origin" contains; then pass "Offers uBlock Origin on first start"; else echo "- ⚠️ No uBlock Origin prompt seen on first start (needs internet access to addons.mozilla.org): $(screen_text first-start)" >> "$SUMMARY"; fi
+# uBlock Origin is installed silently: no add-on prompt may show.
+if has first-start text "uBlock Origin" contains; then fail "An add-on prompt showed on first start: $(screen_text first-start)"; else pass "No add-on prompt on first start"; fi
+sleep 20
+if grep -q "uBlock Origin was not installed" "$OUT/logcat.txt"; then echo "- ⚠️ uBlock Origin install failed (no internet on the emulator?)" >> "$SUMMARY"; fi
 dismiss_prompts
 
 # ---- downloads --------------------------------------------------------------------------------------------------
@@ -202,8 +207,11 @@ refuse_case(){ # $1 = stream name, $2 = request path, $3 = label, $4 = expected 
 refuse_case enc "/streams/enc/index.m3u8" "Encrypted HLS" "copy-protected"
 refuse_case live "/streams/live/index.m3u8" "Live HLS" "live stream"
 
-if grep -qE "FATAL EXCEPTION.*|Process: $PKG" "$OUT/logcat.txt" && grep -q "FATAL EXCEPTION" "$OUT/logcat.txt"; then
-  fail "The app crashed (see logcat.txt)"
+if grep -A1 "FATAL EXCEPTION" "$OUT/logcat.txt" | grep -q "Process: $PKG"; then
+  fail "Block Browser crashed (see logcat.txt)"
+fi
+if grep -q "The system died" "$OUT/logcat.txt"; then
+  echo "- ⚠️ The emulator's Android system restarted during the check (emulator out of memory?); later failures may be from that" >> "$SUMMARY"
 fi
 echo >> "$SUMMARY"
 cat "$SUMMARY"
